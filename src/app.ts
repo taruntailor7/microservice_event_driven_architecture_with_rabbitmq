@@ -18,19 +18,27 @@ createConnection().then(db => {
     app.get('/api/products', async (req: Request, res: Response) => {
         const products = await productRepository.find();
         res.json(products);
-    })
+    });
 
     app.post('/api/products', async (req: Request, res: Response) => {
         const product = await productRepository.create(req.body);
         const result = await productRepository.save(product);
         return res.send(result);
-    })
+    });
 
     app.get('/api/products/:id', async (req: Request, res: Response) => {
         const productId = Number(req.params.id);
         const product = await productRepository.findOneBy({ id: productId });
         return res.send(product);
-    })
+    });
+
+    app.put('/api/products/:id', async (req: Request, res: Response) => {
+        const productId = Number(req.params.id);
+        const product = await productRepository.findOneBy({ id: productId });
+        productRepository.merge(product, req.body);
+        const result = await productRepository.save(product)
+        return res.send(result);
+    });
     
     console.log("Listening on port: 8000"); 
     app.listen(8000);
