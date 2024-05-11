@@ -25,6 +25,12 @@ createConnection().then(db => {
         const result = await productRepository.save(product);
         return res.send(result);
     })
+
+    app.get('/api/products/:id', async (req: Request, res: Response) => {
+        const productId = Number(req.params.id);
+        const product = await productRepository.findOneBy({ id: productId });
+        return res.send(product);
+    })
     
     console.log("Listening on port: 8000"); 
     app.listen(8000);
