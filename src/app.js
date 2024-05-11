@@ -59,6 +59,20 @@ var product_1 = require("./entity/product");
             }
         });
     }); });
+    app.post('/api/products', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+        var product, result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, productRepository.create(req.body)];
+                case 1:
+                    product = _a.sent();
+                    return [4 /*yield*/, productRepository.save(product)];
+                case 2:
+                    result = _a.sent();
+                    return [2 /*return*/, res.send(result)];
+            }
+        });
+    }); });
     console.log("Listening on port: 8000");
     app.listen(8000);
 });

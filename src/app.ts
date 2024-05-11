@@ -19,6 +19,12 @@ createConnection().then(db => {
         const products = await productRepository.find();
         res.json(products);
     })
+
+    app.post('/api/products', async (req: Request, res: Response) => {
+        const product = await productRepository.create(req.body);
+        const result = await productRepository.save(product);
+        return res.send(result);
+    })
     
     console.log("Listening on port: 8000"); 
     app.listen(8000);
