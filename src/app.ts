@@ -36,6 +36,7 @@ createConnection().then(db => {
             app.post('/api/products', async (req: Request, res: Response) => {
                 const product = await productRepository.create(req.body);
                 const result = await productRepository.save(product);
+                channel.sendToQueue("product_created", Buffer.from(JSON.stringify(result)));
                 return res.send(result);
             });
         
@@ -49,13 +50,15 @@ createConnection().then(db => {
                 const productId = Number(req.params.id);
                 const product = await productRepository.findOneBy({ id: productId });
                 productRepository.merge(product, req.body);
-                const result = await productRepository.save(product)
+                const result = await productRepository.save(product);
+                channel.sendToQueue("product_updated", Buffer.from(JSON.stringify(result)));
                 return res.send(result);
             });
         
             app.delete('/api/products/:id', async (req: Request, res: Response) => {
                 const result = await productRepository.delete(req.params.id);
-                return res.send(result);
+                channel.sendToQueue("product_deleted", Buffer.from(req.params.id));
+                return res.send(result) 
             });
         
             app.post('/api/products/:id/like', async (req: Request, res: Response) => {
@@ -68,6 +71,10 @@ createConnection().then(db => {
             
             console.log("Listening on port: 8000"); 
             app.listen(8000);
+            process.on('beforeExit', () => {
+                console.log("Closing connection");
+                connection.close(); 
+            });
         });
     });
 });
