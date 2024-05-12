@@ -58,7 +58,7 @@ createConnection().then(db => {
             app.delete('/api/products/:id', async (req: Request, res: Response) => {
                 const result = await productRepository.delete(req.params.id);
                 channel.sendToQueue("product_deleted", Buffer.from(req.params.id));
-                return res.send(result) 
+                return res.send(result); 
             });
         
             app.post('/api/products/:id/like', async (req: Request, res: Response) => {
